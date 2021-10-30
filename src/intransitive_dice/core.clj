@@ -73,8 +73,7 @@
   ;; might be helpful for pursuing it further, eg
   ;; https://www.mail-archive.com/clojure@googlegroups.com/msg98801.html
   ;; which points to the spyscope `spy` macro: https://github.com/clojure/tools.logging/blob/master/src/main/clojure/clojure/tools/logging.clj#L120
-  ;; info on &env: http://blog.jayfields.com/2011/02/clojure-and.html
-  ;;
+  ;; info on &env and &form: http://blog.jayfields.com/2011/02/clojure-and.html
 
   (defmacro print-with-name [x]
     (prn "env:" &env)
@@ -90,15 +89,17 @@
   fractional values)."
     [[A B C]]
     (let [result-scores (atom [])]
+      ;; (for [pair [['A 'B] ['B 'C] ['C 'A]]]
       (for [pair [[A B] [B C] [C A]]]
         (let [x (first pair), y (second pair)
               result-percentage (compare-rolls-pair x y)]
+          (println "evalling from fn:" pair (compare-rolls-pair (eval x) (eval y)))
           (print-with-name pair)
           (println pair ":")
           (println (first pair))
           (println (second pair))
           (println
-           (format  "%s wins %02f of the time against %s."
+           (format  "%s wins %.02f of the time against %s."
                     (first pair) result-percentage (second pair)))
           (println)
           ;; (println (first pair) "wins" (compare-rolls-pair x y) "of the time.")
